@@ -9,9 +9,11 @@ class Main {
       Enemy enemy3 = new Enemy((int) (Math.random() * 16), (int) (Math.random() * 16), 1);
       GameManagement game = new GameManagement(mPlayer, enemy1, enemy2, enemy3);
       game.setGameUp();
-      for(int i = 0; i < 20; i++) { 
+      while(true) { 
         game.displayScreen();
+        game.removeLightning();
         game.askForMove();
+        game.fireLine();
       }
     }
   }

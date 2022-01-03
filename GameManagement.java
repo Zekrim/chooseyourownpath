@@ -44,11 +44,11 @@ public class GameManagement {
     // Make sure that no enemies overlap with the player when this is called
     // Gets user input 
     public void askForMove() {
-        boardState[player.getX()][player.getY()] = ' ';
+        boardState[player.getY()][player.getX()] = ' ';
         System.out.println("Do you wish to rotate up to a quarter of a revolution?" +
         " (r for 45° right turn, R for 90° right turn, l for 45° left turn, L for " +
-        "90° left turn, and press enter for no rotation at all.");
-        String result = inputManager.nextLine();
+        "90° left turn, and press n for no rotation at all.");
+        String result = inputManager.next();
         if(result.toUpperCase().equals("L")) {
             player.turnLeft();
             if(result.equals("L")) {
@@ -59,19 +59,19 @@ public class GameManagement {
             if(result.equals("R")) {
                 player.turnRight();
             }
-        } else if(!result.equals("")) {
+        } else if(!result.equals("n")) {
             System.out.println("Invalid input, continuing...");
         }
 
         System.out.println("Do you want to move left, right, or neither (l/r/n)");
         result = inputManager.next();
         if(result.equals("l")) {
-            if(player.getY() != 0) {
-                player.moveY(player.getY() - 1);
+            if(player.getX() != 0) {
+                player.moveX(player.getX() - 1);
             }
         } else if(result.equals("r")) {
-            if(player.getY() != size - 1) {
-                player.moveY(player.getY() + 1);
+            if(player.getX() != size - 1) {
+                player.moveX(player.getX() + 1);
             }
         } else if(!result.equals("n")) {
             System.out.println("Invalid input, continuing...");
@@ -80,12 +80,12 @@ public class GameManagement {
         System.out.println("Do you want to move up, down, or neither (u/d/n)");
         result = inputManager.next();
         if(result.equals("u")) {
-            if(player.getX() != 0) {
-                player.moveX(player.getX() - 1);
+            if(player.getY() != 0) {
+                player.moveY(player.getY() - 1);
             }
         } else if(result.equals("d")) {
-            if(player.getX() != size - 1) {
-                player.moveX(player.getX() + 1);
+            if(player.getY() != size - 1) {
+                player.moveY(player.getY() + 1);
             }
         } else if(!result.equals("n")) {
             System.out.println("Invalid input, continuing...");
@@ -107,6 +107,85 @@ public class GameManagement {
             System.out.print('█');
         }
         System.out.println();
+    }
+
+    public void removeLightning() {
+        for(char[] i : boardState) {
+            for(char j : i) {
+                if(j == 'L') {
+                    j = ' ';
+                }
+            }
+        }
+    }
+
+    public void fireLine() {
+        switch(player.getOrientation()) {
+            case NORTH:
+                for(int i = player.getY() - 1; i >= 0; i--) {
+                    boardState[i][player.getX()] = 'L';
+                }
+                break;
+            case NORTHEAST:
+                try {
+                    int xCoord = player.getX() + 1;
+                    int yCoord = player.getY() - 1;
+                    while(true) {
+                        boardState[yCoord][xCoord] = 'L';
+                        xCoord++;
+                        yCoord--;
+                    }
+                } catch(IndexOutOfBoundsException e) {}
+                break;
+            case EAST:
+                for(int i = player.getY() + 1; i < size; i++) {
+                    boardState[player.getY()][i] = 'L';
+                }
+                break;
+            case SOUTHEAST:
+            try {
+                int xCoord = player.getX() + 1;
+                int yCoord = player.getY() + 1;
+                while(true) {
+                    boardState[yCoord][xCoord] = 'L';
+                    xCoord++;
+                    yCoord++;
+                }
+            } catch(IndexOutOfBoundsException e) {}
+                break;
+            case SOUTH:
+                for(int i = player.getY() + 1; i < size; i++) {
+                    boardState[i][player.getX()] = 'L';
+                }
+                break;
+            case SOUTHWEST:
+            try {
+                int xCoord = player.getX() - 1;
+                int yCoord = player.getY() + 1;
+                while(true) {
+                    boardState[yCoord][xCoord] = 'L';
+                    xCoord--;
+                    yCoord++;
+                }
+            } catch(IndexOutOfBoundsException e) {}
+                break;
+            case WEST:
+                for(int i = player.getX() - 1; i >= 0; i--) {
+                    boardState[player.getY()][i] = 'L';
+                }
+                break;
+            default: //Always northwest
+            try {
+                int xCoord = player.getX() - 1;
+                int yCoord = player.getY() - 1;
+                while(true) {
+                    boardState[yCoord][xCoord] = 'L';
+                    xCoord--;
+                    yCoord--;
+                }
+            } catch(IndexOutOfBoundsException e) {}
+                break;
+        }
     }
 
     //Prints text to display the game
